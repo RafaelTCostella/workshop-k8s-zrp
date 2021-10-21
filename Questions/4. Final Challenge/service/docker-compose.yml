@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  db:
+    hostname: db
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  app:
+    image: app:nightly
+    container_name: app
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/home/node/app
+    hostname: app
+    command: /bin/ash -c "npm install && npm start"
+    environment:
+      MONGO_URL: mongodb://root:example@db:27017/sample?authSource=admin
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
