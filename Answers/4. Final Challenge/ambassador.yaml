@@ -1,0 +1,27 @@
+---
+kind: Mapping
+apiVersion: getambassador.io/v2
+metadata:
+  name: server-routing
+  namespace: ambassador
+spec:
+  selector:
+    matchLabels:
+      app: ms-server-ambassador-routing
+  prefix: /api/
+  rewrite: /api/
+  service: server-service.default
+  cors:
+    origins: "*"
+    methods: POST, GET, PUT, PATCH, DELETE, OPTIONS
+    headers: Content-Type
+    credentials: true
+    max_age: "86400"
+---
+kind: AuthService
+apiVersion: getambassador.io/v2
+metadata:
+  name: ambassador-edge-stack-auth
+  namespace: ambassador
+spec:
+  auth_service: auth-service.default
